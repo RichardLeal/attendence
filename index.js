@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const authenticate = require('./middleware.function');
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use(bodyParser.json());
 
 // Routes
 const checkInRoute = require('./check-in.route');
-app.use('/check-in', checkInRoute);
+app.use('/check-in', authenticate.authenticate, checkInRoute);
 
 const authenticationRoute = require('./authentication.route');
 app.use('/auth', authenticationRoute);
