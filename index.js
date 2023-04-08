@@ -1,11 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const authenticate = require('./middleware.function');
+const moment = require('moment-timezone');
 
 const app = express();
 
+// Configuration
+moment.tz.setDefault('America/Sao_Paulo');
+
 // Connect to MongoDB
+mongoose.set('strictQuery', false);
 mongoose.connect('mongodb+srv://attendence:att-lab-soft-2022-2@attendance.wua72ln.mongodb.net/Attendance?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -22,7 +26,7 @@ app.use(bodyParser.json());
 
 // Routes
 const checkInRoute = require('./check-in.route');
-app.use('/check-in', authenticate.authenticate, checkInRoute);
+app.use('/check-in', checkInRoute);
 
 const authenticationRoute = require('./authentication.route');
 app.use('/auth', authenticationRoute);
