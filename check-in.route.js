@@ -90,7 +90,6 @@ router.post('/', middleware.verifyRole(UserRole.STUDENT), async (req, res) => {
     const nowOnlyDate = now.format('YYYY-MM-DD');
     const nowOnlyDateConcatWithStartAt = moment(nowOnlyDate + checkIn.time.startAt);
     const nowOnlyDateConcatWithEndAt = moment(nowOnlyDate + checkIn.time.endAt);
-    console.log(now, nowOnlyDate, nowOnlyDateConcatWithStartAt, nowOnlyDateConcatWithEndAt);
     if (now < nowOnlyDateConcatWithStartAt || now > nowOnlyDateConcatWithEndAt) {
       res.status(400).json({ message: 'Check-in is outside the time range' });
       return null;
