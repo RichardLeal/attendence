@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const CheckIn = require('./check-in.schema');
+const HistoryCheckIn = require('./history-check-in.schema');
 const UserRole = require('./user-role.const');
 const middleware = require('./middleware.function');
 const moment = require('moment-timezone');
@@ -94,6 +95,32 @@ router.post('/', middleware.verifyRole(UserRole.STUDENT), async (req, res) => {
       res.status(400).json({ message: 'Check-in is outside the time range' });
       return null;
     }
+    
+    // Check if check-in in already done
+    const historyCheckInIfAlreadyDone = await HistoryCheckIn.find({
+      'student.registration': registration,
+      'semester.name': checkIn.semester.name,
+      'checkIn.class.code': checkIn.class.code,
+      'checkIn.date': { $gte: nowOnlyDateConcatWithStartAt, $lte: nowOnlyDateConcatWithEndAt }
+    });
+    if(historyCheckInIfAlreadyDone.length > 0){
+      res.status(406).json({ message: 'Check-in in already done' });
+      return null;
+    }
+    // Create a check in in check in list of student
+    const historyCheckIn = await HistoryCheckIn.updateOne({
+      'student.registration': registration,
+      'semester.name': checkIn.semester.name
+    },{
+      student: student,
+      semester: checkIn.semester,
+      $push: {
+        checkIn: { 
+          class: checkIn.class,
+          date: now
+        }
+      }
+    }, { upsert: true });
 
     res.json({ message: 'Check-in successful' });
   } catch (err) {
