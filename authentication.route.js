@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Create a JWT token with the user's registration and role
-    const token = jwt.sign({ registration: user.registration, role }, secretKey);
+    const token = jwt.sign({ registration: user.registration, role }, secretKey, { expiresIn: '5m' });
 
     res.json({ name: user.name, registration: user.registration, role, token });
   } catch (err) {

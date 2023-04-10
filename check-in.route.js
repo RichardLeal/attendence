@@ -106,6 +106,7 @@ router.post('/', middleware.verifyRole(UserRole.STUDENT), async (req, res) => {
       res.status(406).json({ message: 'Check-in in already done' });
       return null;
     }
+    
     // Create a check in in check in list of student
     const historyCheckIn = await HistoryCheckIn.updateOne({
       'student.registration': registration,
